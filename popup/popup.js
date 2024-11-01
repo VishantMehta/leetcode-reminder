@@ -1,27 +1,26 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("reminderForm");
-    const statusMessage = document.getElementById("statusMessage");
-  
-    // Load saved settings when popup opens
-    chrome.storage.sync.get(["interval", "difficulty"], (data) => {
-      document.getElementById("interval").value = data.interval || "daily";
-      document.getElementById("difficulty").value = data.difficulty || "easy";
+document.addEventListener('DOMContentLoaded', () => {
+    const frequencySelect = document.getElementById('frequency');
+    const difficultySelect = document.getElementById('difficulty');
+    const setReminderButton = document.getElementById('setReminder');
+
+    // Load saved settings
+    chrome.storage.sync.get(['reminderFrequency', 'preferredDifficulty'], (data) => {
+        if (data.reminderFrequency) {
+            frequencySelect.value = data.reminderFrequency;
+        }
+        if (data.preferredDifficulty) {
+            difficultySelect.value = data.preferredDifficulty;
+        }
     });
-  
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      
-      const interval = document.getElementById("interval").value;
-      const difficulty = document.getElementById("difficulty").value;
-  
-      // Save settings to storage
-      chrome.storage.sync.set({ interval, difficulty }, () => {
-        statusMessage.textContent = "Reminder set successfully!";
-        statusMessage.style.color = "#28a745";
-        setTimeout(() => {
-          statusMessage.textContent = "";
-        }, 2000);
-      });
+
+    // Set reminder button click event
+    setReminderButton.addEventListener('click', () => {
+        const reminderFrequency = frequencySelect.value;
+        const preferredDifficulty = difficultySelect.value;
+
+        // Save the settings
+        chrome.storage.sync.set({ reminderFrequency, preferredDifficulty }, () => {
+            alert('Settings saved successfully!');
+        });
     });
-  });
-  
+});
